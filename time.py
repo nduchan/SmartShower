@@ -14,20 +14,20 @@ def main():
 
 	#warning_time= datetime.timedelta(0,0,0,0,1)
 
+	print current_time() >=  (timeline[3][2] + datetime.datetime(0,0,0,0,15)):
 
+	#print warning_time
 
-	print warning_time
-
-	new_time= datetime.datetime(2015,9,13,11,00,0) - datetime.datetime.now()
-	new_time= new_time.strftime('%H:%M:%S')
-	new_time= datetime.datetime.strptime(new_time, '%M')
-	print new_time
+	#new_time= datetime.datetime(2015,9,13,11,00,0) - datetime.datetime.now()
+	#new_time= new_time.strftime('%H:%M:%S')
+	#new_time= datetime.datetime.strptime(new_time, '%M')
+	#print new_time
 
 
 def current_time(): # returns current hour, min, and second in military time
 	RN = datetime.datetime.now()
-	now = datetime.time(RN.hour, RN.minute, RN.second)
-	return now
+	#now = datetime.time(RN.hour, RN.minute, RN.second)
+	return RN
 
 
 if __name__ == "__main__":
