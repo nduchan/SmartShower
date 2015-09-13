@@ -89,7 +89,7 @@ def state_SO(state,scheduled_user, scheduled_user_start_time, scheduled_user_end
 	GPIO.output(green_led,True) # green light indicates scheduled
 	print shower_state
 	print scheduled_user, "is scheduled to use shower, but has not begun yet"
-	while 1:
+	#while 1:
 		if (GPIO.input(button) == True) & (shower_state =='SO'):
 			time.sleep(1)
 			return False
@@ -103,7 +103,7 @@ def state_SC(state,scheduled_user, scheduled_user_end_time):
 	turn_off_all_led()
 	shower_state=state
 	warning_time= scheduled_user_end_time - datetime.timedelta(0,60)
-	while 1:
+	#while 1:
 		if GPIO.input(button):
 			time.sleep(1)
 			return False
@@ -127,6 +127,7 @@ def state_SC(state,scheduled_user, scheduled_user_end_time):
 		else:
 			print 'either UC or UO'
 
+		
 	return
 
 #############
