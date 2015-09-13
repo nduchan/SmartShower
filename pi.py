@@ -90,7 +90,7 @@ def state_SO(state,scheduled_user, scheduled_user_start_time, scheduled_user_end
 	print shower_state
 	print scheduled_user, "is scheduled to use shower, but has not begun yet"
 	while 1:
-		if (GPIO.input(button) == True) & (shower_state='SO'):
+		if (GPIO.input(button) == True) & (shower_state =='SO'):
 			time.sleep(1)
 			return False
 		elif current_time() >= scheduled_user_start_time:
