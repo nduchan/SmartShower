@@ -43,69 +43,6 @@ def handle_collision(begin, end, person, array_in):
 
 		return [begin, end, person]
 
-
-
-
-
-		"""if x[0] < begin:
-			earliest = x[0]
-
-		#condition where collision is first and second event
-		#push first event earlier by difference
-		#----------B------E-----------added
-		#-----B------E----------------new
-		#becomes
-		#----------B------E-----------added
-		#--B------E-------------------new
-		if end > x[0] and earliest == begin:
-			begin = begin - (end-x[0])
-			end = end - (end - x[0])
-			array_in.append([begin, end, person])
-			return array_in
-
-		elif begin == x[0] and end == x[1]:
-			print array_in[i][0], array_in[i][1], array_in[i][2]
-			array_in[i][1] = begin =begin+ (end-begin)/2
-			array_in.append([begin, end, person])
-			return array_in
-
-		#condition where collision is last event
-		#split difference between colliding events
-		#----------B-----------E----------added
-		#-----------------B---------E-----new
-		#becomes
-		#----------B--------E-------------added
-		#--------------------B------E-----new
-		elif i == len(array_in)-1:
-			print ' clairie'
-			begin = begin + (end-x[1])/2
-			array_in[i][1] = array_in[i][1] - (end-x[1])/2
-			array_in.append([begin, end, person])
-			return array_in
-
-		elif begin < x[1] and end <= array_in[i+1][0]:
-			print 'sydney'
-			print i
-			print begin, end, person
-			print x[0], x[1], x[2]
-			begin = begin + (end-x[1])/2
-			print begin
-			array_in[i][1] = array_in[i][1] - (end-x[1])/2
-			array_in.append([begin, end, person])
-			return array_in
-
-		elif begin < x[1] and end >= array_in[i+1][0]:
-			print 'collide!!!!!!!!!!'
-			print x[2]
-			print x[0], x[1]
-			print begin, end, person
-			end = end - (end - array_in[i+1][0])/2
-			array_in[i+1][0] = array_in[i+1][0] - (end - array_in[i+1][0])/2
-			array_in.append([begin, end, person])
-			return array_in"""
-
-
-
 def getKey(item, self):
 	return item[0]
 
