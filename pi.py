@@ -90,12 +90,12 @@ def state_SO(state,scheduled_user, scheduled_user_start_time, scheduled_user_end
 	print shower_state
 	print scheduled_user, "is scheduled to use shower, but has not begun yet"
 	#while 1:
-		if (GPIO.input(button) == True) & (shower_state =='SO'):
-			time.sleep(1)
-			return False
-		elif current_time() >= scheduled_user_start_time:
-			flash_all()
-			return
+	if (GPIO.input(button) == True) & (shower_state =='SO'):
+		time.sleep(1)
+		return False
+	elif current_time() >= scheduled_user_start_time:
+		flash_all()
+		return
 
 	return    
 
@@ -104,28 +104,28 @@ def state_SC(state,scheduled_user, scheduled_user_end_time):
 	shower_state=state
 	warning_time= scheduled_user_end_time - datetime.timedelta(0,60)
 	#while 1:
-		if GPIO.input(button):
-			time.sleep(1)
-			return False
-		elif (current_time() <= warning_time): #User is on time and in the shower
-			print scheduled_user, 'is currently scheduled and in the shower...'
-			GPIO.output(red_led,True) # red light indicates closed
-			GPIO.output(green_led,True) # green light indicates scheduled
-		elif (current_time() >= warning_time) &  (current_time() <= scheduled_user_end_time): # User has <1 minute
-			GPIO.output(yellow_led, TRUE) # <1 minute left
-			## ADD SIREN SOUNDZZZZ 
-			print scheduled_user, 'has less than a minute for their scheduled shower time'
-		elif (current_time() > scheduled_user_end_time):
-			turn_off_all_led()
-			flash_all()
+	if GPIO.input(button):
+		time.sleep(1)
+		return False
+	elif (current_time() <= warning_time): #User is on time and in the shower
+		print scheduled_user, 'is currently scheduled and in the shower...'
+		GPIO.output(red_led,True) # red light indicates closed
+		GPIO.output(green_led,True) # green light indicates scheduled
+	elif (current_time() >= warning_time) &  (current_time() <= scheduled_user_end_time): # User has <1 minute
+		GPIO.output(yellow_led, TRUE) # <1 minute left
+		## ADD SIREN SOUNDZZZZ 
+		print scheduled_user, 'has less than a minute for their scheduled shower time'
+	elif (current_time() > scheduled_user_end_time):
+		turn_off_all_led()
+		flash_all()
 
-			#amt= current_time() - scheduled_user_end_time # Calculate amount owed
-			#if amt == integer
-				# BUZ
-			#amt= 
-			#print scheduled_user, 'is over their allotted shower duration. Owes ', amt ,' dollars'
-		else:
-			print 'either UC or UO'
+		#amt= current_time() - scheduled_user_end_time # Calculate amount owed
+		#if amt == integer
+			# BUZ
+		#amt= 
+		#print scheduled_user, 'is over their allotted shower duration. Owes ', amt ,' dollars'
+	else:
+		print 'either UC or UO'
 
 		
 	return
