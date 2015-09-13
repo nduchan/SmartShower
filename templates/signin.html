@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Smart Shower Sign Up</title>
+	<title>Smart Shower Sign In</title>
 	<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
 	<link href="../static/signup.css" rel=stylesheet">
@@ -17,9 +17,9 @@
 				<ul class="nav nav-pills pull-right">
 					<li role="presentation"><a href="home">Home</a>
 					</li>
-					<li role="presentation"><a href="showSignIn">Sign In</a>
+					<li role="presentation" class="active"><a href="showSignIn">Sign In</a>
 					</li>
-					<li role="presentation" class="active"><a href="showSignUp">Sign Up</a>
+					<li role="presentation"><a href="showSignUp">Sign Up</a>
 					</li>
 				</ul>
 			</nav>
@@ -28,15 +28,13 @@
 
 		<div class="jumbotron">
 			<h1>Smart Shower App</h1>
-			{% if exists %}
-			<h5>That email is already associated with an account!</h5>
+			{% if invalid %}
+			<h5>Invalid email/password combination. Try again</h5>
 			{% endif %}
-			<form class="form-signin" action="/signUp" method="POST">
-				<input type="name" name="inputFName" id="inputFName" class="form-control" placeholder="First Name" required autofocus>
-				<input type="name" name="inputLName" id="inputLName" class="form-control" placeholder="Last Name" required autofocus>
+			<form class="form-signin" action="/signIn" method="POST">
 				<input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 				<input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
-				<button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+				<button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign In!</button>
 			</form>	
 		</div>
 
@@ -46,3 +44,4 @@
 	</div>
 </body>
 </html>
+
