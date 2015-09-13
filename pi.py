@@ -34,22 +34,22 @@ def set_timeline(): # makes the timeline
 	############ User 1
 	user1 = 'Deven'
 	user1_start_time = datetime.datetime(2015,9,13,10,00,0)
-	user1_end_time = datetime.datetime(2015,9,13,05,31,0)
+	user1_end_time = datetime.datetime(2015,9,13,10,31,0)
 
 	############ User 2
 	user2 = 'Albert'
-	user2_start_time = datetime.datetime(2015,9,13,05,31,0)
-	user2_end_time = datetime.datetime(2015,9,13,05, 46,0)
+	user2_start_time = datetime.datetime(2015,9,13,10,32,0)
+	user2_end_time = datetime.datetime(2015,9,13,11,00,0)
 
 	############ User 3
 	user3 = 'Spencer'
-	user3_start_time = datetime.datetime(2015,9,13,05,46,0)
-	user3_end_time = datetime.datetime(2015,9,13,05,51,0)
+	user3_start_time = datetime.datetime(2015,9,13,11,01,0)
+	user3_end_time = datetime.datetime(2015,9,13,11,30,0)
 
 	############ User 4
 	user4 = 'Noah'
-	user4_start_time = datetime.datetime(2015,9,13,05,51,0)
-	user4_end_time = datetime.datetime(2015,9,13,05,59,0)
+	user4_start_time = datetime.datetime(2015,9,13,11,30,0)
+	user4_end_time = datetime.datetime(2015,9,13,12,00,0)
 
 	timeline = [[user1, user1_start_time, user1_end_time],
 			[user2, user2_start_time, user2_end_time],
@@ -111,7 +111,7 @@ def state_SC(scheduled_user, scheduled_user_end_time):
 			print scheduled_user, 'is currently scheduled and in the shower...'
 			GPIO.output(red_led,True) # red light indicates closed
 			GPIO.output(green_led,True) # green light indicates scheduled
-		if (current_time() >= warning_time) &&  (current_time() <= scheduled_user_end_time): # User has <1 minute
+		if (current_time() >= warning_time) &  (current_time() <= scheduled_user_end_time): # User has <1 minute
 			GPIO.output(yellow_led, TRUE) # <1 minute left
 			## ADD SIREN SOUNDZZZZ 
 			print scheduled_user, 'has less than a minute for their scheduled shower time'
