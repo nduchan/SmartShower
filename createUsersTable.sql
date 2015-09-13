@@ -10,6 +10,7 @@ CREATE TABLE users
 	duration INT,
 	buffer INT,
 	morning BOOLEAN,
-	event TIMESTAMP
+	event TIMESTAMP NULL,
+	calendar_id VARCHAR(128)
 );
 

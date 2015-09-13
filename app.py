@@ -29,15 +29,171 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
 mysql.init_app(app)
 
+##################################################################
+
+def get_long(new_start, new_end, scheduled_start, scheduled_end):
+    if scheduled_end - new_start > new_end - scheduled_start:
+        return 0
+    else:
+        return 1
+
+def single_double(new_start, new_end, first_start, first_end):
+    collision = 0
+    if new_start >= first_start and new_start < first_end:
+        collision += 1
+    elif new_end <= first_end and new_end > first_start:
+        collision += 1
+    return collision
+
+def handle_collision(begin, end, person, array_in):
+    earliest = begin
+    for i, x in enumerate(array_in):
+        maximize = 0  #0 -> take new start old end, #1 -> take old start new finish
+        single_collision = single_double(begin, end, x[0], x[1])
+        if single_collision == 0:
+            continue
+        else:
+            maximize = get_long(begin, end, x[0], x[1])
+            if maximize:
+                begin = array_in[i][1] = x[1]- (x[1]-begin)/2
+            else:
+                end = array_in[i][0] = end- (end-x[0])/2
+
+        return [begin, end, person]
+
+def getKey(item, self):
+    return item[0]
+
+
+def sortIt(array_in):
+    array_in = sorted(array_in, key=lambda time:time[0])
+    return array_in
+
+
+
+def check_collision(begin, end, array_in):
+    if not array_in:
+        return True
+    for x in array_in:
+        if begin < x[1] and begin > x[0]:
+            return False
+        if end > x[0] and begin < x[1]:
+            return False
+    return True
+
+
+def calc_best(userList_in):
+    outArray = []
+    for user in userList_in:
+        ptimeEnd = user[1]-user[3]
+        ptimeBegin = ptimeEnd-datetime.timedelta(minutes=user[2])
+        check_out = check_collision(ptimeBegin, ptimeEnd, outArray)
+        if not check_out:
+            holder = handle_collision(ptimeBegin, ptimeEnd, user[0], outArray)
+            holder = handle_collision(holder[0], holder[1], holder[2], outArray)
+            outArray.append(holder)
+        else:
+            outArray.append([ptimeBegin, ptimeEnd, user[0]])
+        outArray = sortIt(outArray)
+
+    return outArray
+
+def get_user_events(address_in):
+    conn = mysql.connection
+    cursor = conn.cursor()
+    cursor.execute("SELECT fname, event, duration, buffer FROM smartshowerdb.users WHERE event IS NOT NULL AND address='{0}'".format(address_in))
+    result = cursor.fetchall()
+    new_result = []
+    for user in result:
+        new_user = []
+        for item in user:
+            new_user.append(item)
+        new_result.append(new_user)
+    return new_result
+
+def convert_times(Users_in):
+    for i, user in enumerate(Users_in):
+        Users_in[i][3] = datetime.datetime.strptime('00:'+str(user[3])+':00', '%H:%M:%S')
+    return Users_in
+
+def run_algorithm(address_in):
+
+    Users = get_user_events(address_in)
+
+    """ 0 - username, 1 - event start, 2 - shower time, 3 - prefered time before event"""
+    #Deven = ('Deven', datetime.datetime.strptime('4:00:00', '%H:%M:%S'), 30, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
+    #Albert = ('Albert', datetime.datetime.strptime('3:30:00', '%H:%M:%S'), 30, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
+    #Noah = ('Noah', datetime.datetime.strptime('3:45:00', '%H:%M:%S'), 30, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
+    #Spencer = ('Spencer', datetime.datetime.strptime('8:00:00', '%H:%M:%S'), 10, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
+    #Users.append(Deven)
+    #Users.append(Albert)
+    #Users.append(Noah)
+    #Users.append(Spencer)
+    Users = convert_times(Users)
+    outSchedule = calc_best(Users)
+    print 'SCHEDULE'
+    print '----------------------'
+    print outSchedule
+    print outSchedule[0][0], outSchedule[0][1], outSchedule[0][2]
+    #print outSchedule[1][0], outSchedule[1][1], outSchedule[1][2]
+    #print outSchedule[2][0], outSchedule[2][1], outSchedule[2][2]
+    #print outSchedule[3][0], outSchedule[3][1], outSchedule[3][2]
+
+
+##################################################################################
+
+
+
+
 @app.route('/')
 @app.route('/main')
 def main():
     return render_template("index.html")
 
+@app.route('/home')
+def home():
+    if flask.session['signed_in']:
+        return render_template('home.html')
+    else:
+        return render_template('index.html')
+
+
 @app.route('/showSignUp')
 @app.route('/showSignUp/<exists>')
 def showSignUp(exists=None):
     return render_template('signup.html', exists=exists)
+
+@app.route('/showSignIn')
+def showSignIn(invalid=None):
+    return render_template('signin.html', invalid=invalid)
+
+@app.route('/signIn', methods=['POST'])
+def signIn():
+    _email = request.form['inputEmail']
+    _password = request.form['inputPassword']
+
+    if _email and _password:
+        conn = mysql.connection
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM SmartShowerDB.users WHERE email='{0}'".format(_email))
+        result = cursor.fetchall()
+        pw = result[0][0]
+        
+        if (pw == _password):
+            cursor.execute("SELECT id, fname, lname FROM SmartShowerDB.users WHERE email='{0}'".format(_email))
+            result = cursor.fetchall()
+            flask.session['last_id'] = result[0][0]
+            flask.session['fname'] = result[0][1]
+            flask.session['lname'] = result[0][2]
+            flask.session['signed_in'] = True
+#            return render_template('home.html') 
+            return render_template('home.html')
+        else:
+            return render_template('signin.html', invalid=True)
+    else:
+        return render_template('signin.html', invalid=True)
+
+
 
 @app.route('/signUp', methods=['POST'])
 def signUp():
@@ -52,13 +208,13 @@ def signUp():
         #couldnt get mysql.connect() to work, ran into "Connection object is not callable"
         conn = mysql.connection
         cursor = conn.cursor()
-        _hashed_password = generate_password_hash(_password)
         cursor.execute('''SELECT EXISTS(
 			SELECT 1 
 			FROM SmartShowerDB.users
 			WHERE email = '{0}')'''.format(_email))
         result = cursor.fetchall();
         exists = result[0][0]
+        
         if exists:
             return render_template('signup.html', exists=True);
         else:
@@ -73,13 +229,15 @@ def signUp():
 			'{1}',
 			'{2}',
 			'{3}'
-		);'''.format(_fname, _lname, _email, _hashed_password));
+		);'''.format(_fname, _lname, _email, _password));
             conn.commit()
             cursor.execute("SELECT LAST_INSERT_ID()")
             result = cursor.fetchall()
             last_id = result[0][0]
-            print last_id
             flask.session['last_id'] = last_id
+            flask.session['fname'] = _fname
+            flask.session['lname'] = _lname
+            flask.session['signed_in'] = True
             return render_template('completeProfile.html', last_id=last_id)
     else:
         return json.dumps({'html':'<span>fields incorrect</span>'})
@@ -96,9 +254,10 @@ def complete():
     if _phone and _address and _ampm and _duration and _buffer:
         conn = mysql.connection
         cursor = conn.cursor()
-        morning = False
+        morning = 0
         if _ampm == 'am':
-            morning = True
+            morning = 1
+        
         cursor.execute('''UPDATE SmartShowerDB.users
                SET phone = '{0}',
                    address = '{1}',
@@ -108,13 +267,36 @@ def complete():
                WHERE id = '{5}';
                     '''.format(_phone, _address, morning, _duration, _buffer, _last_id));
         conn.commit()
+        
+        cursor.execute('''
+			SELECT calendar_id 
+			FROM SmartShowerDB.users
+			WHERE address = '{0}'
+                        AND calendar_id IS NOT NULL
+                        '''.format(_address))
+        result = cursor.fetchall()
+        
+        if result:
+            _calendar_id = result[0][0]
+            flask.session['calendar_id'] = _calendar_id
+
+            cursor.execute('''UPDATE SmartShowerDB.users
+                            SET calendar_id = '{0}'
+                            WHERE id = '{1}';'''.format(_calendar_id, _last_id))
+            conn.commit()
+            return flask.redirect(flask.url_for('addSharedCalendar'))
+        else:
+            return flask.redirect(flask.url_for('createSharedCalendar'))
+            #flask.session['calendar_id'] = None
         return render_template("addEarliest.html", last_id=_last_id)
 
     else:
         return json.dumps({'html':'<span>fields incorrect</span>'})
 
-@app.route('/register', methods=['POST', 'GET'])
-def register():
+@app.route('/addSharedCalendar')
+def addSharedCalendar():
+    flask.session['oauth_caller'] = 'addSharedCalendar'
+
     if 'credentials' not in flask.session:
         return flask.redirect(flask.url_for('oauth2callback'))
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
@@ -124,24 +306,123 @@ def register():
         http_auth = credentials.authorize(httplib2.Http())
         cal_service = discovery.build('calendar', 'v3', http_auth)
 
-        now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-        eventsResult = cal_service.events().list(
-            calendarId='primary', timeMin=now, maxResults=1, singleEvents=True,
-            orderBy='startTime').execute()
-        events = eventsResult.get('items', [])
-        if not events:
-            #write null to db
-            return "no events"
-        else:
-            last_id = flask.session['last_id']
-            start = events[0]['start'].get('dateTime')
-            conn = mysql.connection
-            cursor = conn.cursor()
-            cursor.execute('''UPDATE SmartShowerDB.users
-                    SET event = '{0}'
-                    WHERE id = '{1}'
-                    '''.format(start, last_id)) 
-            return start
+    calendar_id = flask.session['calendar_id']
+
+    ##add to acl
+    rule = {
+        'scope': {
+            'type': 'domain',
+            'value': 'umich.edu'
+        },
+        'role': 'writer'
+    }
+    cal_service.acl().insert(calendarId=calendar_id, body=rule).execute()
+
+    ##add to cal list
+    calendar_list_entry = {
+        'id': calendar_id
+    }
+    cal_service.calendarList().insert(body=calendar_list_entry).execute()
+
+    uid = flask.session['last_id']
+    conn = mysql.connection
+    cursor = conn.cursor()
+    cursor.execute('''UPDATE SmartShowerDB.users
+                SET calendar_id = '{0}'
+                WHERE id = '{1}';'''.format(calendar_id, uid))
+    conn.commit()
+    return render_template("addEarliest.html", last_id=uid)    
+
+
+
+@app.route('/createSharedCalendar')
+def createSharedCalendar():
+    flask.session['oauth_caller'] = 'createSharedCalendar'
+
+    if 'credentials' not in flask.session:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+    if credentials.access_token_expired:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    else:
+        http_auth = credentials.authorize(httplib2.Http())
+        cal_service = discovery.build('calendar', 'v3', http_auth)
+    
+    ##create calendar
+    calendar = {
+        'summary': 'SmartShower Schedule',
+        'timeZone': 'America/Detroit'
+    }
+
+    created_calendar = cal_service.calendars().insert(body=calendar).execute()
+    calendar_id = created_calendar['id']
+    
+    ##add to acl
+    rule = {
+        'scope': {
+            'type': 'domain',
+            'value': 'umich.edu'
+        },
+        'role': 'writer'
+    }
+    cal_service.acl().insert(calendarId=calendar_id, body=rule).execute()
+
+    ##add to cal list
+    calendar_list_entry = {
+        'id': calendar_id
+    }
+    cal_service.calendarList().insert(body=calendar_list_entry).execute()
+
+    uid = flask.session['last_id']
+    conn = mysql.connection
+    cursor = conn.cursor()
+    cursor.execute('''UPDATE SmartShowerDB.users
+                SET calendar_id = '{0}'
+                WHERE id = '{1}';'''.format(calendar_id, uid))
+    conn.commit()
+    return render_template("addEarliest.html", last_id=uid)    
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    flask.session['oauth_caller'] = 'register'
+
+    if 'credentials' not in flask.session:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+    if credentials.access_token_expired:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    else:
+        http_auth = credentials.authorize(httplib2.Http())
+        cal_service = discovery.build('calendar', 'v3', http_auth)
+
+    if (datetime.datetime.utcnow() < datetime.datetime.strptime('06:00:00', '%H:%M:%S')):
+        now = datetime.datetime.utcnow().isoformat() + 'Z'
+        endOfDay = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime('11:59:59', '%H:%M:%S').time()).isoformat() +'Z'
+    else: 
+        now = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime('11:59:59', '%H:%M:%S').time()).isoformat() +'Z'
+        endOfDay = datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=1), datetime.datetime.strptime('11:59:59', '%H:%M:%S').time()).isoformat() +'Z'
+    eventsResult = cal_service.events().list(
+        calendarId='primary', timeMin=now, timeMax=endOfDay, maxResults=1, singleEvents=True).execute()
+    events = eventsResult.get('items', [])
+    last_id = flask.session['last_id']
+    conn = mysql.connection
+    cursor = conn.cursor()
+    if not events:
+        #write null to db
+        notice = "no events"
+    else:
+        start = events[0]['start'].get('dateTime')
+        notice = start
+        cursor.execute('''UPDATE SmartShowerDB.users
+                SET event = '{0}'
+                WHERE id = '{1}'
+                '''.format(start, last_id))
+    cursor.execute("SELECT address FROM smartshowerdb.users WHERE id = '{0}'".format(last_id))
+    result = cursor.fetchall()
+    address = result[0][0]
+    run_algorithm(address)
+    
+    return notice
 
 
 @app.route('/oauth2callback')
@@ -158,11 +439,10 @@ def oauth2callback():
         auth_code = flask.request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
         flask.session['credentials'] = credentials.to_json()
-        return flask.redirect(flask.url_for('register'))
+        caller = flask.session['oauth_caller']
+        return flask.redirect(flask.url_for(caller))
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
 
 
