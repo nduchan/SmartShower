@@ -22,126 +22,114 @@ GPIO.output(green_led,False)
 GPIO.output(yellow_led,False)
 
 
-def switch(button):
-	if (GPIO.input(button) & (occupied ==0)):
-		occupied = 1
-		print occupied
-		return occupied
-	else:
-		return occupied
-
 
 def current_time(): # returns current hour, min, and second in military time
-    RN = datetime.datetime.now()
-    now = datetime.time(RN.hour, RN.minute, RN.second)
-    return now
+	RN = datetime.datetime.now()
+	#now = datetime.time(RN.hour, RN.minute, RN.second)
+	return RN
 
 
 def set_timeline(): # makes the timeline 
 
-    ############ User 1
-    user1 = 'Deven'
-    user1_start_time = datetime.time(05,00,0)
-    user1_end_time = datetime.time(05,31,0)
+	############ User 1
+	user1 = 'Deven'
+	user1_start_time = datetime.datetime(2015,9,13,10,00,0)
+	user1_end_time = datetime.datetime(2015,9,13,05,31,0)
 
-    ############ User 2
-    user2 = 'Albert'
-    user2_start_time = datetime.time(05,31,0)
-    user2_end_time = datetime.time(05, 46,0)
+	############ User 2
+	user2 = 'Albert'
+	user2_start_time = datetime.datetime(2015,9,13,05,31,0)
+	user2_end_time = datetime.datetime(2015,9,13,05, 46,0)
 
-    ############ User 3
-    user3 = 'Spencer'
-    user3_start_time = datetime.time(05,46,0)
-    user3_end_time = datetime.time(05,51,0)
+	############ User 3
+	user3 = 'Spencer'
+	user3_start_time = datetime.datetime(2015,9,13,05,46,0)
+	user3_end_time = datetime.datetime(2015,9,13,05,51,0)
 
-    ############ User 4
-    user4 = 'Noah'
-    user4_start_time = datetime.time(05,51,0)
-    user4_end_time = datetime.time(05,59,0)
+	############ User 4
+	user4 = 'Noah'
+	user4_start_time = datetime.datetime(2015,9,13,05,51,0)
+	user4_end_time = datetime.datetime(2015,9,13,05,59,0)
 
-    timeline = [[user1, user1_start_time, user1_end_time],
-            [user2, user2_start_time, user2_end_time],
-            [user3, user3_start_time, user3_end_time],
-            [user4, user4_start_time, user4_end_time]]
-    return timeline
+	timeline = [[user1, user1_start_time, user1_end_time],
+			[user2, user2_start_time, user2_end_time],
+			[user3, user3_start_time, user3_end_time],
+			[user4, user4_start_time, user4_end_time]]
+	return timeline
 
 def print_timeline(timeline):
-    for i in timeline:
-        print "name:", i[0]
-        print "start time:" , i[1]
-        print "end time: " , i[2]
-        print 
+	for i in timeline:
+		print "name:", i[0]
+		print "start time:" , i[1]
+		print "end time: " , i[2]
+		print 
 
 def determine_current_turn(timeline):
-    for i in timeline:
-        if (i[1] < current_time() < i[2]):
-            return i 
-    return False
-
-
+	for i in timeline:
+		if (i[1] < current_time() < i[2]):
+			return i 
+	return False
 
 
 def state_UO(): # U & open, no problems, normal operations
-    print "UO"
-    return
+	state= 'UO'
+	print state
+	turn_off_all_led()
+	return
 
 def state_UC(): #U & Closed, no problems, normal operations
-    GPIO.output(red_led,True) # red light indicates closed
-    print "UC"
-    return
+	GPIO.output(red_led,True) # red light indicates closed
+	state= 'UC'
+	print state
+	return
 
-def state_SO(scheduled_user, scheduled_user_end_time): # scheduled and open, 
-    turn_off_all_led()
-    GPIO.output(green_led,True) # green light indicates scheduled
-    print "SO"
-    print scheduled_user, "is scheduled to use shower, but has not begun yet"
-    while 1:
+def state_SO(scheduled_user, scheduled_user_start_time, scheduled_user_end_time): # scheduled and open, 
+	turn_off_all_led()
+	GPIO.output(green_led,True) # green light indicates scheduled
+	print state
+	print scheduled_user, "is scheduled to use shower, but has not begun yet"
+	while 1:
 		if GPIO.input(button) == True:
-			occupied = True
-			return occupied
+			state='SC'
+			last_state='SO'
+			return
+		if current_time() >= scheduled_user_start_time:
+			flash_all()
 
-    return    
+	return    
 
 def state_SC(scheduled_user, scheduled_user_end_time):
-    GPIO.output(red_led,True) # red light indicates closed
-    GPIO.output(green_led,True) # green light indicates scheduled
+	turn_off_all_led()
+	warning_time= scheduled_user_end_time - datetime.timedelta(0,60)
 
-   # warning_time = scheduled_user_end_time - datetime.timedelta(0,0,0,0,1) #datetime.datetime.strptime('00:01:00', '%H:%M:%S')
-    warning_time = datetime.time(05,15,0)
+	while 1:
+		if GPIO.input(button):
+			state= 'SO'
+			last_state= 'SC'
+			return		
+		if (current_time() <= warning_time): #User is on time and in the shower
+			print scheduled_user, 'is currently scheduled and in the shower...'
+			GPIO.output(red_led,True) # red light indicates closed
+			GPIO.output(green_led,True) # green light indicates scheduled
+		if (current_time() >= warning_time) &&  (current_time() <= scheduled_user_end_time): # User has <1 minute
+			GPIO.output(yellow_led, TRUE) # <1 minute left
+			## ADD SIREN SOUNDZZZZ 
+			print scheduled_user, 'has less than a minute for their scheduled shower time'
+		if (current_time() > scheduled_user_end_time):
+			turn_off_all_led()
+			flash_all()
 
-    occupied = True
-    while (current_time() <= warning_time): # nothing wrong, user in shower
-        while occupied == True:
-            print scheduled_user, "is scheduled and currently using...waiting..."
-            while 1:
-				if GPIO.input(button):
-					occupied = 0
-					return occupied
-				if (current_time() == warning_time) & (occupied == True):
-					GPIO.output(yellow_led,True) # yellow light indicates warning
-                                print "one min left"
-				while 1: 
-					if GPIO.input(button):
-						occupied = 0
-						return occupied
-					else:
-					        while ((current_time() >= warning_time) & (occupied == True)):
-						    print scheduled_user,  "is going over time"
-						    while 1:
-							if GPIO.input(button):
-								occupied = 0
-								return occupied
-							else:
-								flash_all()
-								if(GPIO.input(button)):
-									GPIO.output(red_led,0)
-									GPIO.output(green_led,0)
-									GPIO.output(yellow_led,0)
-									occupied = 0
-									turn_off_all_led()
-									return occupied
-    if occupied == False:
-        return
+			#amt= current_time() - scheduled_user_end_time # Calculate amount owed
+			#if amt == integer
+				# BUZ
+			#amt= 
+			#print scheduled_user, 'is over their allotted shower duration. Owes ', amt ,' dollars'
+		else:
+			print 'either UC or UO'
+
+	return
+
+#############
 
 def flash_all():
 	
@@ -161,27 +149,24 @@ def turn_off_all_led():
 	GPIO.output(yellow_led,0)
 
 def main():
-    occupied = False
-    timeline = set_timeline()
-    print_timeline(timeline)
-    while 1:
-		if determine_current_turn(timeline) == False: # unscheduled
-		    if occupied == False: # open U.O.
-		        state_UO()
-		    elif occupied == True: # closed U.C.
-		        state_UC()
+	timeline = set_timeline()
+	print_timeline(timeline)
+	#state = 'SO'
+	# Determine State and Loop
+	while 1:
+		if determine_current_turn(timeline) == False: # Unscheduled
+			state_UO()
+		if current_time() >=  (timeline[3][2] + datetime.datetime(0,15)): # Time is after the end of the last person's shower, thus Unscheduled & Closed
+			state_UC()
 		else:  # scheduled
-		    scheduled_user = determine_current_turn(timeline)[0]
-		    scheduled_user_end_time = determine_current_turn(timeline)[2]
-		   # print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
-		    if occupied == False: # open S.O.
-		        if state_SO(scheduled_user, scheduled_user_end_time) == True: #  occupied is true
-				occupied = True
-		    elif occupied == True: # closed S.C.
+			scheduled_user = determine_current_turn(timeline)[0]
+			scheduled_user_end_time = determine_current_turn(timeline)[2]
+			   # print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
+			if state == 'SO':
+				state_SO(scheduled_user, scheduled_user_start_time, scheduled_user_end_time)
+			if state == 'SC':
+				state_SC(scheduled_user, scheduled_user_end_time)
 
-		        if state_SC(scheduled_user, scheduled_user_end_time) == False:
-					GPIO.output(green_led,1)
-		        
 
 
 
