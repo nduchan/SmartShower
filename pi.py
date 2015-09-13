@@ -34,7 +34,7 @@ def set_timeline(): # makes the timeline
 	############ User 1
 	user1 = 'Deven'
 	user1_start_time = datetime.datetime(2015,9,13,11,40,0)
-	user1_end_time = datetime.datetime(2015,9,13,11,45,0)
+	user1_end_time = datetime.datetime(2015,9,13,13,12,0)
 
 	############ User 2
 	user2 = 'Albert'
