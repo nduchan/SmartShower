@@ -1,16 +1,26 @@
+import flask
 from flask import Flask
 from flask.ext.mysqldb import MySQL
 from flask import render_template
 from flask import request
 from flask import json
 from werkzeug import generate_password_hash, check_password_hash
-from flask import g
-from oauth2client import client#, crypt
+from oauth2client import client
+import httplib2
+import json
+from apiclient import discovery
+import datetime
 
 CLIENT_ID = "456555048105-49j7n97kvjuluk4f0b3598m70sk0e293"
+SCOPE = 'https://www.googleapis.com/auth/calendar'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'SmartShower'
 
 app = Flask(__name__)
 mysql = MySQL()
+
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
 
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
@@ -97,24 +107,50 @@ def complete():
                WHERE id = '{5}';
                     '''.format(_phone, _address, morning, _duration, _buffer, _last_id));
         conn.commit()
-        return render_template("registerGoogle.html")
+        return render_template("addEarliest.html", last_id=_last_id)
 
     else:
         return json.dumps({'html':'<span>fields incorrect</span>'})
 
-@app.route('/authorize', methods=['POST'])
-def authorize():
-    _token = request.form['token']
-    #try:
-    idinfo = client.verify_id_token(_token, CLIENT_ID)
-    #except crypt.AppIdentityError:
-     #   return "oops!"
-        #oops!
-    userid = idinfo['sub']
-    http = userid.authorize(httplib2.Http())
-    
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if 'credentials' not in flask.session:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+    if credentials.access_token_expired:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    else:
+        http_auth = credentials.authorize(httplib2.Http())
+        cal_service = discovery.build('calendar', 'v3', http_auth)
+
+        now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+        eventsResult = cal_service.events().list(
+            calendarId='primary', timeMin=now, maxResults=1, singleEvents=True,
+            orderBy='startTime').execute()
+        events = eventsResult.get('items', [])
+        if not events:
+            #write null to db
+            return "no events"
+        else:
+            start = events[0]['start'].get('dateTime')
+            return start
 
 
+@app.route('/oauth2callback')
+def oauth2callback():
+    flow = client.flow_from_clientsecrets(
+                CLIENT_SECRET_FILE,
+                SCOPE,
+                redirect_uri=flask.url_for('oauth2callback', _external=True)
+                )
+    if 'code' not in flask.request.args:
+        auth_uri = flow.step1_get_authorize_url()
+        return flask.redirect(auth_uri)
+    else:
+        auth_code = flask.request.args.get('code')
+        credentials = flow.step2_exchange(auth_code)
+        flask.session['credentials'] = credentials.to_json()
+        return flask.redirect(flask.url_for('register'))
 
 
 @app.route("/helloworld")
