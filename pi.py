@@ -101,7 +101,7 @@ def state_SO(scheduled_user, scheduled_user_start_time, scheduled_user_end_time)
 def state_SC(scheduled_user, scheduled_user_end_time):
 	turn_off_all_led()
 	warning_time= scheduled_user_end_time - datetime.timedelta(0,60)
-
+	flag=1
 	while 1:
 		if GPIO.input(button):
 			state= 'SO'
@@ -156,7 +156,7 @@ def main():
 	while 1:
 		if determine_current_turn(timeline) == False: # Unscheduled
 			state_UO()
-		if current_time() >=  (timeline[3][2] + datetime.datetime(0,0,0,0,15)): # Time is after the end of the last person's shower, thus Unscheduled & Closed
+		if current_time() >=  (timeline[3][2] + datetime.timedelta(minutes=15): # Time is after the end of the last person's shower, thus Unscheduled & Closed
 			state_UC()
 		else:  # scheduled
 			scheduled_user = determine_current_turn(timeline)[0]
