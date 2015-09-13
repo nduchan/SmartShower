@@ -10,6 +10,6 @@ CREATE TABLE users
 	duration INT,
 	buffer INT,
 	morning BOOLEAN,
-	credentials VARCHAR(1024)
+	event TIMESTAMP
 );
 

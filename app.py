@@ -79,6 +79,7 @@ def signUp():
             result = cursor.fetchall()
             last_id = result[0][0]
             print last_id
+            flask.session['last_id'] = last_id
             return render_template('completeProfile.html', last_id=last_id)
     else:
         return json.dumps({'html':'<span>fields incorrect</span>'})
@@ -132,7 +133,14 @@ def register():
             #write null to db
             return "no events"
         else:
+            last_id = flask.session['last_id']
             start = events[0]['start'].get('dateTime')
+            conn = mysql.connection
+            cursor = conn.cursor()
+            cursor.execute('''UPDATE SmartShowerDB.users
+                    SET event = '{0}'
+                    WHERE id = '{1}'
+                    '''.format(start, last_id)) 
             return start
 
 
