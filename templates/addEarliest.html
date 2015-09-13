@@ -4,14 +4,6 @@
 	<title>SmartShower</title>
 	<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	<meta name="google-signin-client_id" content="456555048105-49j7n97kvjuluk4f0b3598m70sk0e293.apps.googleusercontent.com">
-
-			<script>
-				function onSignIn(googleUser) {
-					var id_token = googleUser.getAuthResponse().id_token;
-				document.getElementById('token_id').value=id_token;
-			</script>
 
 </head>
 <body>
@@ -31,11 +23,10 @@
 		
 		<div class="jumbotron">
 			<h1>Smart Shower App</h1>
-			<div class="g-signin2" data-onsuccess="onSignIn"></div>
-		
-			<form class="form-signin" action="/authorize" method="POST">
-				<input type="hidden" name="token" value="">
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Authorize!</button>
+			<form class="form-signin" action="/register" method="POST">
+				<!--get id from session obj? -->
+				<input type="hidden" name="last_id" value="{{last_id}}">
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Register earliest event!</button>
 			</form>
 		</div>
 
