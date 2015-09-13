@@ -14,7 +14,7 @@ def main():
 
 	#warning_time= datetime.timedelta(0,0,0,0,1)
 
-	print current_time() >=  (timeline[3][2] + datetime.datetime(0,0,0,0,15)):
+	print current_time() >=  (timeline[3][2] + datetime.timedelta(minutes)):
 
 	#print warning_time
 

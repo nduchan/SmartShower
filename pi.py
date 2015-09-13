@@ -83,39 +83,39 @@ def state_UC(): #U & Closed, no problems, normal operations
 	print state
 	return
 
-def state_SO(scheduled_user, scheduled_user_start_time, scheduled_user_end_time): # scheduled and open, 
+def state_SO(state,scheduled_user, scheduled_user_start_time, scheduled_user_end_time): # scheduled and open, 
 	turn_off_all_led()
+	shower_state=state
 	GPIO.output(green_led,True) # green light indicates scheduled
-	print state
+	print shower_state
 	print scheduled_user, "is scheduled to use shower, but has not begun yet"
 	while 1:
-		if GPIO.input(button) == True:
-			state='SC'
-			last_state='SO'
-			return
-		if current_time() >= scheduled_user_start_time:
+		if (GPIO.input(button) == True) & (shower_state='SO'):
+			time.sleep(1)
+			return False
+		elif current_time() >= scheduled_user_start_time:
 			flash_all()
+			return
 
 	return    
 
-def state_SC(scheduled_user, scheduled_user_end_time):
+def state_SC(shower_state,scheduled_user, scheduled_user_end_time):
 	turn_off_all_led()
+	shower_state=state
 	warning_time= scheduled_user_end_time - datetime.timedelta(0,60)
-	flag=1
 	while 1:
 		if GPIO.input(button):
-			state= 'SO'
-			last_state= 'SC'
-			return		
-		if (current_time() <= warning_time): #User is on time and in the shower
+			time.sleep(1)
+			return False
+		elif (current_time() <= warning_time): #User is on time and in the shower
 			print scheduled_user, 'is currently scheduled and in the shower...'
 			GPIO.output(red_led,True) # red light indicates closed
 			GPIO.output(green_led,True) # green light indicates scheduled
-		if (current_time() >= warning_time) &  (current_time() <= scheduled_user_end_time): # User has <1 minute
+		elif (current_time() >= warning_time) &  (current_time() <= scheduled_user_end_time): # User has <1 minute
 			GPIO.output(yellow_led, TRUE) # <1 minute left
 			## ADD SIREN SOUNDZZZZ 
 			print scheduled_user, 'has less than a minute for their scheduled shower time'
-		if (current_time() > scheduled_user_end_time):
+		elif (current_time() > scheduled_user_end_time):
 			turn_off_all_led()
 			flash_all()
 
@@ -156,16 +156,18 @@ def main():
 	while 1:
 		if determine_current_turn(timeline) == False: # Unscheduled
 			state_UO()
-		if current_time() >=  (timeline[3][2] + datetime.timedelta(minutes=15): # Time is after the end of the last person's shower, thus Unscheduled & Closed
+		if current_time() >=  (timeline[3][2] + datetime.timedelta(minutes=15)): # Time is after the end of the last person's shower, thus Unscheduled & Closed
 			state_UC()
 		else:  # scheduled
 			scheduled_user = determine_current_turn(timeline)[0]
 			scheduled_user_end_time = determine_current_turn(timeline)[2]
 			   # print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
 			if state == 'SO':
-				state_SO(scheduled_user, scheduled_user_start_time, scheduled_user_end_time)
+				if state_SO(state, scheduled_user, scheduled_user_start_time, scheduled_user_end_time)==False
+					state='SC'
 			if state == 'SC':
-				state_SC(scheduled_user, scheduled_user_end_time)
+				if state_SC(state, scheduled_user, scheduled_user_end_time)==False
+					state='SO'
 
 
 
