@@ -6,7 +6,7 @@ led=17
 bttn=18
 
 
-GPIO.setmode(GPIO.BMC)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(bttn, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # initial button is off
 GPIO.setup(led, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)  # initial led is off
 
