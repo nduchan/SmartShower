@@ -1,5 +1,15 @@
 import RPi.GPIO as GPIO           # import RPi.GPIO module  
 GPIO.setmode(GPIO.BCM)            # choose BCM or BOARD  
-GPIO.setup(port_or_pin, GPIO.OUT) # set a port/pin as an output   
-GPIO.output(port_or_pin, 1)       # set port/pin value to 1/GPIO.HIGH/True  
-GPIO.output(port_or_pin, 0)       # set port/pin value to 0/GPIO.LOW/False  
+led = 16
+btn = 12
+GPIO.setup(led, GPIO.OUT)    
+
+try:  
+    while True:  
+        GPIO.output(led, 1)         # set GPIO16 to 1/GPIO.HIGH/True  
+        sleep(0.2)                
+        GPIO.output(led, 0)         # set GPIO16 to 0/GPIO.LOW/False  
+        sleep(0.2)                
+  
+except KeyboardInterrupt:          # trap a CTRL+C keyboard interrupt  
+    GPIO.cleanup()                 # resets all GPIO ports used by this program 
