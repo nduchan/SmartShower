@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Smart Shower Sign Up</title>
+	<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+	<link href="../static/signup.css" rel=stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!--	<script src="../static/js/signUp.js"></script>-->
+
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<nav>
+				<ul class="nav nav-pills pull-right">
+					<li role="presentation"><a href="main">Home</a>
+					</li>
+					<li role="presentation"><a href="#">Sign In</a>
+					</li>
+					<li role="presentation" class="active"><a href="#">Sign Up</a>
+					</li>
+				</ul>
+			</nav>
+			<h3 class="text-muted">Smart Shower!</h3>
+		</div>
+
+		<div class="jumbotron">
+			<h1>Smart Shower App</h1>
+			{% if exists %}
+			<h5>That email is already associated with an account!</h5>
+			{% endif %}
+			<form class="form-signin" action="/signUp" method="POST">
+				<input type="name" name="inputFName" id="inputFName" class="form-control" placeholder="First Name" required autofocus>
+				<input type="name" name="inputLName" id="inputLName" class="form-control" placeholder="Last Name" required autofocus>
+				<input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+				<input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+				<button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+			</form>	
+		</div>
+
+		<footer class="footer">
+			<p>&copy; 741 inc.</p>
+		</footer>
+	</div>
+</body>
+</html>

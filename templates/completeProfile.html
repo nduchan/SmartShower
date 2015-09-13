@@ -1,0 +1,45 @@
+<!DOCTYPE html />
+<html lang="en">
+<head>
+	<title>SmartShower</title>
+	<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<nav>
+				<ul class="nav nav-pills pull-right">
+					<li role="presentation"><a href="#">Home</a>
+					</li>
+					<li role="presentation"><a href="#">Sign In</a>
+					</li>
+					<li role="presentation" class="active"><a href="showSignUp">Sign Up</a>
+					</li>
+			</nav>
+			<h3 class="text-muted">Smart Shower!</h3>
+		</div>
+		
+		<div class="jumbotron">
+			<h1>Smart Shower App</h1>
+			<h3>Complete your profile!</h3>
+			<form class="form-signin" action="/complete" method="POST">
+				<input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone Number" required autofocus>
+				<input type="text" name="address" id="address" class="form-control" placeholder="Street Address" required autofocus>
+				<span>How long do you like your shower? (10-20 minutes) <input type="number" name="duration" class="form-control" min="5" max="20"></span>
+				<span>How long to you need to get to class after showering? (10-60 minutes) <input type="number" name="buffer" class="form-control" min="10" max="60"></span>
+				<span>
+					<input type="radio" name="ampm" value="am" >  Morning
+					<input type="radio" name="ampm" value="pm" >  Evening
+				</span><br>
+				<input type="hidden" name="last_id" value="{{last_id}}"> {{last_id}}<br>
+				<button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
+			</form>
+		</div>
+
+		<footer class="footer">
+			<p>&copy; 741 inc.</p>
+		</footer>
+	</div>
+</body>
+</html>
