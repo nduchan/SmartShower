@@ -116,28 +116,66 @@ def convert_times(Users_in):
         Users_in[i][3] = datetime.datetime.strptime('00:'+str(user[3])+':00', '%H:%M:%S')
     return Users_in
 
+def write_calendar(list_in):
+    if datetime.datetime.now() < datetime.datetime.strptime('06:00:00', '%H:%M:%S'):
+        scanner = datetime.datetime.combine(datetime.datetime.today(), datetime.datetime.strptime('00:00:00', '%H:%M:%S').time())
+    else:
+        scanner = datetime.datetime.combine(datetime.datetime.today()+ datetime.timedelta(days=1), datetime.datetime.strptime('00:00:00', '%H:%M:%S').time())
+
+    scanner_end = scanner+datetime.timedelta(days=1)
+    scanner = scanner.isoformat()+'Z'
+    scanner_end = scanner_end.isoformat()+ 'Z'
+    credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+    http_auth = credentials.authorize(httplib2.Http())
+    cal_service = discovery.build('calendar', 'v3', http_auth)
+
+    eventsResult = cal_service.events().list(
+        calendarId=flask.session['calendar_id'], timeMin=scanner, timeMax=scanner_end, maxResults=25, singleEvents=True).execute()
+    events = eventsResult.get('items', [])
+    if events:
+        for x in events:
+            cal_service.events().delete(calendarId=flask.session['calendar_id'], eventId=x['id']).execute()
+
+
+    for x in list_in:
+        if datetime.datetime.now() < datetime.datetime.strptime('06:00:00', '%H:%M:%S'):
+            _date = datetime.date.today()
+        else:
+            _date = datetime.date.today() + datetime.timedelta(days=1)
+
+        x[0] = (datetime.datetime.combine(_date, (datetime.datetime.min+x[0]).time())).isoformat()
+        x[1] = (datetime.datetime.combine(_date, (datetime.datetime.min+x[1]).time())).isoformat()
+        event = {
+            'summary': 'Shower Time for '+ x[2] ,
+            'description': 'Shower times optimized for you by 741 inc.',
+            'start': {
+                'dateTime': x[0],
+                'timeZone': 'America/Detroit',
+            },
+            'end': {
+                'dateTime': x[1],
+                'timeZone': 'America/Detroit',
+            },
+            'reminders': {
+                'useDefault': False
+            },
+        }
+
+        credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+        http_auth = credentials.authorize(httplib2.Http())
+        cal_service = discovery.build('calendar', 'v3', http_auth)
+        event = cal_service.events().insert(calendarId=flask.session['calendar_id'], body=event).execute()
+
+
 def run_algorithm(address_in):
 
     Users = get_user_events(address_in)
 
     """ 0 - username, 1 - event start, 2 - shower time, 3 - prefered time before event"""
-    #Deven = ('Deven', datetime.datetime.strptime('4:00:00', '%H:%M:%S'), 30, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
-    #Albert = ('Albert', datetime.datetime.strptime('3:30:00', '%H:%M:%S'), 30, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
-    #Noah = ('Noah', datetime.datetime.strptime('3:45:00', '%H:%M:%S'), 30, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
-    #Spencer = ('Spencer', datetime.datetime.strptime('8:00:00', '%H:%M:%S'), 10, datetime.datetime.strptime('1:00:00', '%H:%M:%S'))
-    #Users.append(Deven)
-    #Users.append(Albert)
-    #Users.append(Noah)
-    #Users.append(Spencer)
     Users = convert_times(Users)
     outSchedule = calc_best(Users)
-    print 'SCHEDULE'
-    print '----------------------'
-    print outSchedule
-    print outSchedule[0][0], outSchedule[0][1], outSchedule[0][2]
-    #print outSchedule[1][0], outSchedule[1][1], outSchedule[1][2]
-    #print outSchedule[2][0], outSchedule[2][1], outSchedule[2][2]
-    #print outSchedule[3][0], outSchedule[3][1], outSchedule[3][2]
+
+    write_calendar(outSchedule)
 
 
 ##################################################################################
@@ -153,7 +191,7 @@ def main():
 @app.route('/home')
 def home():
     if flask.session['signed_in']:
-        return render_template('home.html')
+        return render_template('home.html', calendar_id=json.dumps(calendar_id))
     else:
         return render_template('index.html')
 
@@ -374,6 +412,8 @@ def createSharedCalendar():
     cal_service.calendarList().insert(body=calendar_list_entry).execute()
 
     uid = flask.session['last_id']
+    flask.session['calendar_id'] = calendar_id
+
     conn = mysql.connection
     cursor = conn.cursor()
     cursor.execute('''UPDATE SmartShowerDB.users
@@ -397,10 +437,10 @@ def register():
 
     if (datetime.datetime.utcnow() < datetime.datetime.strptime('06:00:00', '%H:%M:%S')):
         now = datetime.datetime.utcnow().isoformat() + 'Z'
-        endOfDay = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime('11:59:59', '%H:%M:%S').time()).isoformat() +'Z'
+        endOfDay = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime('23:59:59', '%H:%M:%S').time()).isoformat() +'Z'
     else: 
-        now = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime('11:59:59', '%H:%M:%S').time()).isoformat() +'Z'
-        endOfDay = datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=1), datetime.datetime.strptime('11:59:59', '%H:%M:%S').time()).isoformat() +'Z'
+        now = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime('23:59:59', '%H:%M:%S').time()).isoformat() +'Z'
+        endOfDay = datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=1), datetime.datetime.strptime('23:59:59', '%H:%M:%S').time()).isoformat() +'Z'
     eventsResult = cal_service.events().list(
         calendarId='primary', timeMin=now, timeMax=endOfDay, maxResults=1, singleEvents=True).execute()
     events = eventsResult.get('items', [])
@@ -408,7 +448,6 @@ def register():
     conn = mysql.connection
     cursor = conn.cursor()
     if not events:
-        #write null to db
         notice = "no events"
     else:
         start = events[0]['start'].get('dateTime')
@@ -421,8 +460,8 @@ def register():
     result = cursor.fetchall()
     address = result[0][0]
     run_algorithm(address)
-    
-    return notice
+    return render_template('home.html')
+    #return notice
 
 
 @app.route('/oauth2callback')

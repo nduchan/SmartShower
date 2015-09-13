@@ -4,8 +4,21 @@
 	<title>Smart Shower Sign Up</title>
 	<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!--
+	<script type="text/javascript">
+	    function prepareCalID() {
+			var calID = document.getElementByID("hiddenCalID").value;
+			 
+
+	        console.log(calendar_id);
+	    }
+	    test_func({{ calendar_id|safe }})
+	</script>
+	-->
+	<meta id="calendar_id" data-name="{{session.calendar_id}}" data-other="{{session.calendar_id}}">
 </head>
-<body>
+<body onload>
 	<div class="container">
 		<div class="header">
 			<nav>
@@ -21,7 +34,46 @@
 		</div>
 		
 		<div class="jumbotron">
-			<h1>Smart Shower App HOME</h1>
+			<h1>Smart Shower App</h1>
+			<h6>{{session.calendar_id}}</h6>
+			<iframe src="https://www.google.com/calendar/embed?showNav=0
+			&amp;showPrint=0
+			&amp;showTabs=0
+			&amp;showCalendars=0
+			&amp;mode=AGENDA
+			&amp;height=600
+			&amp;wkst=1
+			&amp;bgcolor=%23EEEEEE
+			&amp;src=063jcjj46il3jln3f6ggom2p2o%40group.calendar.google.com
+			&amp;color=%235229A3
+			&amp;ctz=America%2FNew_York" style=" border-width:0 " width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+			<!--
+			<iframe src="https://www.google.com/calendar/embed?showNav=0
+				
+				&amp;showPrint=0
+				
+				&amp;showTabs=0
+				
+				&amp;showCalendars=0
+				
+				&amp;mode=AGENDA
+				
+				&amp;height=600
+				
+				&amp;wkst=1
+				
+				&amp;bgcolor=%23FFFFFF
+				
+				&amp;src=063jl3jln3f6ggom2p2o%40group.calendar.google.com
+				
+				&amp;color=%235229A3
+				
+				&amp;ctz=America%2FNew_York" style=" border-width:0 " width="800" height="600" frameborder="0" scrolling="no"></iframe>
+			-->
+			<form class="form-signin" action="/register" method="POST">
+				<!--get id from session obj? yes we did-->
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Register earliest event!</button>
+			</form>
 		</div>
 	</div>
 </body>
