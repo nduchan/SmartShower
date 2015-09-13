@@ -41,23 +41,23 @@ def set_timeline(): # makes the timeline
 
     ############ User 1
     user1 = 'Deven'
-    user1_start_time = datetime.time(04,00,0)
-    user1_end_time = datetime.time(04,31,0)
+    user1_start_time = datetime.time(05,00,0)
+    user1_end_time = datetime.time(05,31,0)
 
     ############ User 2
     user2 = 'Albert'
-    user2_start_time = datetime.time(04,31,0)
-    user2_end_time = datetime.time(04, 46,0)
+    user2_start_time = datetime.time(05,31,0)
+    user2_end_time = datetime.time(05, 46,0)
 
     ############ User 3
     user3 = 'Spencer'
-    user3_start_time = datetime.time(04,46,0)
-    user3_end_time = datetime.time(04,51,0)
+    user3_start_time = datetime.time(05,46,0)
+    user3_end_time = datetime.time(05,51,0)
 
     ############ User 4
     user4 = 'Noah'
-    user4_start_time = datetime.time(04,51,0)
-    user4_end_time = datetime.time(04,59,0)
+    user4_start_time = datetime.time(05,51,0)
+    user4_end_time = datetime.time(05,59,0)
 
     timeline = [[user1, user1_start_time, user1_end_time],
             [user2, user2_start_time, user2_end_time],
@@ -98,18 +98,16 @@ def state_SO(scheduled_user, scheduled_user_end_time): # scheduled and open,
     while 1:
 		if GPIO.input(button) == True:
 			occupied = True
-			if state_SC(scheduled_user, scheduled_user_end_time) == 0: return
-
+			return occupied
 
     return    
 
 def state_SC(scheduled_user, scheduled_user_end_time):
     GPIO.output(red_led,True) # red light indicates closed
     GPIO.output(green_led,True) # green light indicates scheduled
-    print "SC"
 
    # warning_time = scheduled_user_end_time - datetime.timedelta(0,0,0,0,1) #datetime.datetime.strptime('00:01:00', '%H:%M:%S')
-    warning_time = datetime.time(04,56,0)
+    warning_time = datetime.time(05,15,0)
 
     occupied = True
     while (current_time() <= warning_time): # nothing wrong, user in shower
@@ -121,19 +119,27 @@ def state_SC(scheduled_user, scheduled_user_end_time):
 					return occupied
 				if (current_time() == warning_time) & (occupied == True):
 					GPIO.output(yellow_led,True) # yellow light indicates warning
-		            print "one min left"
-		            while ((current_time() >= warning_time) & (occupied == True)):
-		                print scheduled_user, "is going over time"
-		                while 1:
-						flash_all()
-						print 'fadsfasdfa', GPIO.input(button)
-						if(GPIO.input(button)):
-							GPIO.output(red_led,0)
-							GPIO.output(green_led,0)
-							GPIO.output(yellow_led,0)
-							occupied = 0
-							turn_off_all_led()
-							return occupied
+                                print "one min left"
+				while 1: 
+					if GPIO.input(button):
+						occupied = 0
+						return occupied
+					else:
+					        while ((current_time() >= warning_time) & (occupied == True)):
+						    print scheduled_user,  "is going over time"
+						    while 1:
+							if GPIO.input(button):
+								occupied = 0
+								return occupied
+							else:
+								flash_all()
+								if(GPIO.input(button)):
+									GPIO.output(red_led,0)
+									GPIO.output(green_led,0)
+									GPIO.output(yellow_led,0)
+									occupied = 0
+									turn_off_all_led()
+									return occupied
     if occupied == False:
         return
 
@@ -167,11 +173,12 @@ def main():
 		else:  # scheduled
 		    scheduled_user = determine_current_turn(timeline)[0]
 		    scheduled_user_end_time = determine_current_turn(timeline)[2]
-		    print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
+		   # print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
 		    if occupied == False: # open S.O.
-		        state_SO(scheduled_user, scheduled_user_end_time)
-
+		        if state_SO(scheduled_user, scheduled_user_end_time) == True: #  occupied is true
+				occupied = True
 		    elif occupied == True: # closed S.C.
+
 		        if state_SC(scheduled_user, scheduled_user_end_time) == False:
 					GPIO.output(green_led,1)
 		        
