@@ -99,7 +99,7 @@ def state_SO(state,scheduled_user, scheduled_user_start_time, scheduled_user_end
 
 	return    
 
-def state_SC(shower_state,scheduled_user, scheduled_user_end_time):
+def state_SC(state,scheduled_user, scheduled_user_end_time):
 	turn_off_all_led()
 	shower_state=state
 	warning_time= scheduled_user_end_time - datetime.timedelta(0,60)
