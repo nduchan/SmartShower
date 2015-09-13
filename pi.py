@@ -163,10 +163,10 @@ def main():
 			scheduled_user_end_time = determine_current_turn(timeline)[2]
 			   # print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
 			if state == 'SO':
-				if state_SO(state, scheduled_user, scheduled_user_start_time, scheduled_user_end_time)==False
+				if state_SO(state, scheduled_user, scheduled_user_start_time, scheduled_user_end_time)==False:
 					state='SC'
 			if state == 'SC':
-				if state_SC(state, scheduled_user, scheduled_user_end_time)==False
+				if state_SC(state, scheduled_user, scheduled_user_end_time)==False:
 					state='SO'
 
 
