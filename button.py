@@ -2,10 +2,10 @@ import RPi.GPIO as GPIO
 import time
 import os
 
-led=22
+led=24
 bttn=18
 
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BMC)
 GPIO.setup(bttn, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # initial button is off
 GPIO.setup(led, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)  # initial led is off
 
