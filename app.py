@@ -160,15 +160,6 @@ def oauth2callback():
         flask.session['credentials'] = credentials.to_json()
         return flask.redirect(flask.url_for('register'))
 
-
-@app.route("/helloworld")
-def hello():
-    cur = mysql.connection.cursor()
-    cur.execute('''SELECT * FROM SmartShowerDB.users''')
-    msgs = cur.fetchall()
-    return str(msgs)
-
-
 if __name__ == "__main__":
     app.run(debug=True)
 
