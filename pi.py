@@ -151,7 +151,7 @@ def turn_off_all_led():
 def main():
 	timeline = set_timeline()
 	print_timeline(timeline)
-	#state = 'SO'
+	state = 'SO'
 	# Determine State and Loop
 	while 1:
 		if determine_current_turn(timeline) == False: # Unscheduled
