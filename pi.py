@@ -160,6 +160,7 @@ def main():
 			state_UC()
 		else:  # scheduled
 			scheduled_user = determine_current_turn(timeline)[0]
+			scheduled_user_start_time = determine_current_turn(timeline)[1]
 			scheduled_user_end_time = determine_current_turn(timeline)[2]
 			   # print "Current shower time belongs to" , scheduled_user, "because the time is", current_time()
 			if state == 'SO':
