@@ -1,7 +1,29 @@
-﻿
-import datetime
-#import RPi.GPIO as GPIO
+
+import datetim
+
 import sys
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setwarnings(False)	
+GPIO.setmode(GPIO.BCM)
+
+led=13
+bttn=12
+
+GPIO.setup(led, GPIO.OUT)
+
+
+while 1:
+	GPIO.output(led,True)
+	print('1')
+	time.sleep(0.2)
+	print('2')
+	GPIO.output(led,False)
+	time.sleep(0.2)
+
+
+
 
 
 def current_time(): # returns current hour, min, and second in military time
@@ -14,23 +36,23 @@ def set_timeline(): # makes the timeline
 
     ############ User 1
     user1 = 'Deven'
-    user1_start_time = datetime.time(20,00,0)
-    user1_end_time = datetime.time(20,31,0)
+    user1_start_time = datetime.time(02,00,0)
+    user1_end_time = datetime.time(02,31,0)
 
     ############ User 2
     user2 = 'Albert'
-    user2_start_time = datetime.time(20,31,0)
-    user2_end_time = datetime.time(20, 44,0)
+    user2_start_time = datetime.time(02,31,0)
+    user2_end_time = datetime.time(02, 44,0)
 
     ############ User 3
     user3 = 'Spencer'
-    user3_start_time = datetime.time(20,46,0)
-    user3_end_time = datetime.time(20,51,0)
+    user3_start_time = datetime.time(02,46,0)
+    user3_end_time = datetime.time(02,51,0)
 
     ############ User 4
     user4 = 'Noah'
-    user4_start_time = datetime.time(20,51,0)
-    user4_end_time = datetime.time(20,59,0)
+    user4_start_time = datetime.time(02,51,0)
+    user4_end_time = datetime.time(02,59,0)
 
     timeline = [[user1, user1_start_time, user1_end_time],
             [user2, user2_start_time, user2_end_time],
@@ -69,14 +91,15 @@ def state_SO(scheduled_user): # scheduled and open,
 
 def state_SC(scheduled_user, scheduled_user_end_time):
     print "SC"
-    print scheduled_user_end_time
-    warning_time = scheduled_user_end_time - datetime.timedelta(minutes=1)
+    print type(scheduled_user_end_time)
+    print (datetime.time(minutes=1))
+   # warning_time = scheduled_user_end_time + datetime.strptime('1', %M)
     while (current_time() < warning_time): # nothing wrong, user in shower
         while shower_state == True:
             print scheduled_user, "is scheduled and currently using...waiting..."
             if (current_time() == warning_time) & (shower_state == True):
                 print "one min left"
-                if ((current_time() > warning_time) & (shower_state == True)):
+                while ((current_time() > warning_time) & (shower_state == True)):
                     print scheduled_user, "is going over time"
 
         if shower_state == False:
