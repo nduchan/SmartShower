@@ -37,8 +37,8 @@ def main():
 
 
 # Getting the current time...
-timenow= time.time()
-bool inShower
+#timenow= time.time()
+#bool inShower
 
 
-while inShower
+#while inShower
