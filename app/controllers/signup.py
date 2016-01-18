@@ -1,5 +1,5 @@
-import flask
-from flask import Flask
+from flask import *
+from app import app
 from flask.ext.mysqldb import MySQL
 from flask import render_template
 from flask import request
@@ -7,8 +7,10 @@ from flask import json
 import json
 
 
+signup = Blueprint('signup', __name__, template_folder='views')
 
-@app.route('/signUp', methods=['POST'])
+
+@signup.route('/signUp', methods=['POST'])
 def signUp():
     #get data from submitted form
     _fname = request.form['inputFName']
