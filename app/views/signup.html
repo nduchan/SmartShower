@@ -7,7 +7,7 @@
 	<link href="../static/signup.css" rel=stylesheet">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<!--	<script src="../static/js/signUp.js"></script>-->
+	<!--	<script src="../static/js/signUp.js"></script> -->
 
 </head>
 <body>
@@ -17,9 +17,9 @@
 				<ul class="nav nav-pills pull-right">
 					<li role="presentation"><a href="home">Home</a>
 					</li>
-					<li role="presentation"><a href="showSignIn">Sign In</a>
+					<li role="presentation"><a href="signin">Sign In</a>
 					</li>
-					<li role="presentation" class="active"><a href="showSignUp">Sign Up</a>
+					<li role="presentation" class="active"><a href="signup">Sign Up</a>
 					</li>
 				</ul>
 			</nav>
@@ -31,7 +31,7 @@
 			{% if exists %}
 			<h5>That email is already associated with an account!</h5>
 			{% endif %}
-			<form class="form-signin" action="/signUp" method="POST">
+			<form class="form-signin" action="/signup" method="POST">
 				<input type="name" name="inputFName" id="inputFName" class="form-control" placeholder="First Name" required autofocus>
 				<input type="name" name="inputLName" id="inputLName" class="form-control" placeholder="Last Name" required autofocus>
 				<input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>

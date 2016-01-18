@@ -9,7 +9,6 @@ print "making msql and app"
 mysql = MySQL()
 
 DATABASE_NAME = 'SmartShowerDB'
-PREFIX = '/SmartShower'
 # Stuff for DB Configuration
 # app.config['MYSQL_USER'] = 'group74'
 # app.config['MYSQL_PASSWORD'] = 'paddlepals'
@@ -17,9 +16,11 @@ PREFIX = '/SmartShower'
 app.config['DEBUG'] = True
 mysql.init_app(app)
 
+app.config['MYSQL_USER'] = 'root'
+
 
 import controllers
-app.register_blueprint(controllers.home, url_prefix=PREFIX)
-app.register_blueprint(controllers.main, url_prefix=PREFIX)
-app.register_blueprint(controllers.signin, url_prefix=PREFIX)
-app.register_blueprint(controllers.signup, url_prefix=PREFIX)
+app.register_blueprint(controllers.home)
+app.register_blueprint(controllers.main)
+app.register_blueprint(controllers.signin)
+app.register_blueprint(controllers.signup)
