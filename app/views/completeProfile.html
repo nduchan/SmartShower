@@ -23,11 +23,11 @@
 		<div class="jumbotron">
 			<h1>Smart Shower App</h1>
 			<h3>Complete your profile!</h3>
-			<form class="form-signin" action="/complete" method="POST">
+			<form class="form-signin" action="/update_profile" method="POST">
 				<input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone Number" required autofocus>
 				<input type="text" name="address" id="address" class="form-control" placeholder="Street Address" required autofocus>
-				<span>How long do you like your shower? (10-20 minutes) <input type="number" name="duration" class="form-control" min="5" max="20"></span>
-				<span>How long to you need to get to class after showering? (10-60 minutes) <input type="number" name="buffer" class="form-control" min="10" max="60"></span>
+				<span>How long do you like your shower? (10-20 minutes) <input type="number" name="duration" class="form-control" min="10" max="20" required></span>
+				<span>How long to you need to get to class after showering? (10-60 minutes) <input type="number" name="buffer" class="form-control" min="10" max="60" required></span>
 				<span>
 					<input type="radio" name="ampm" value="am" >  Morning
 					<input type="radio" name="ampm" value="pm" >  Evening
