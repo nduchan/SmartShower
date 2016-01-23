@@ -1,1 +1,4 @@
 smartshower-venv
+*.pyc
+*/*.pyc
+*/*/*.pyc`
