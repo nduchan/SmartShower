@@ -18,9 +18,14 @@ mysql.init_app(app)
 
 app.config['MYSQL_USER'] = 'root'
 
+app.secret_key = '\xae\x0e\x1a\xb5\x1e@\xf1\x8e\xd4\xfb\x9c\xe08Z\xd7\xf4\x0c\xe4\x97\xe7\x9c\x14\xc8\xd1'
+
 
 import controllers
 app.register_blueprint(controllers.home)
 app.register_blueprint(controllers.main)
 app.register_blueprint(controllers.signin)
 app.register_blueprint(controllers.signup)
+app.register_blueprint(controllers.update_profile)
+#app.register_blueprint(controllers.createSharedCalendar)
+
