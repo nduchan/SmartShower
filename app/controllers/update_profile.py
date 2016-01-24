@@ -12,7 +12,7 @@ def update():
     if "last_id" in session:
         last_id = session['last_id']
     else:
-        return redirect(url_for('signIn'))
+        return redirect('/signin')
 
     return render_template('completeProfile.html', last_id=last_id)
 
@@ -20,12 +20,31 @@ def update():
 
 @update_profile.route('/update_profile', methods=['POST'])
 def complete():
+
+    # if request.method == 'GET':
+    #     if "last_id" in session:
+    #         last_id = session['last_id']
+    #     else:
+    #        return redirect('/signin')
+    #     return render_template('completeProfile.html', last_id=last_id)
+
+
     _phone = request.form['phone']
     _address = request.form['address']
     _ampm = request.form['ampm']
     _duration = request.form['duration']
     _buffer = request.form['buffer']
-    _last_id = request.form['last_id']
+
+    if 'signed_in' in session:
+        if session['signed_in'] == False:
+            print "User signedin is false try logging in"
+            return redirect('/signin')
+        else:
+            _last_id = session["last_id"]
+
+    else:
+        print "User not signed in, try logging in first!"
+        return redirect('/signin')
 
     if _phone and _address and _ampm and _duration and _buffer:
         conn = mysql.connection
@@ -35,21 +54,19 @@ def complete():
             morning = 1
         
 
-        sql = "UPDATE SmartShowerDB.users SET (phone=%d, address=%s, morning=%s, duration=%i, buffer=%i) WHERE id=%i"
+        sql = "UPDATE SmartShowerDB.users SET phone=%s, address=%s, morning=%s, duration=%s, buffer=%s WHERE id=%s"
 
         cursor.execute(sql, (_phone, _address, morning, _duration, _buffer, _last_id))
         conn.commit()
         
-        cursor.execute("SELECT calendar_id FROM SmartShowerDB.users WHERE address = _address AND calendar_id IS NOT NULL")
+        cursor.execute("SELECT calendar_id FROM SmartShowerDB.users WHERE address = %s AND calendar_id IS NOT NULL", (_address,))
         result = cursor.fetchall()
         
         if result:
             _calendar_id = result[0][0]
             session['calendar_id'] = _calendar_id
 
-            cursor.execute('''UPDATE SmartShowerDB.users
-                            SET calendar_id = '{0}'
-                            WHERE id = '{1}';'''.format(_calendar_id, _last_id))
+            cursor.execute("UPDATE SmartShowerDB.users SET calendar_id = %s WHERE id = %s", (_calendar_id, _last_id))
             conn.commit()
             return redirect('/addSharedCalendar')
         else:

@@ -33,10 +33,10 @@ def signIn():
             sql = "SELECT (id, fname, lname) FROM SmartShowerDB.users WHERE email=%s"
             cursor.execute(sql, _email)
             result = cursor.fetchall()
-            flask.session['last_id'] = result[0][0]
-            flask.session['fname'] = result[0][1]
-            flask.session['lname'] = result[0][2]
-            flask.session['signed_in'] = True
+            session['last_id'] = result[0][0]
+            session['fname'] = result[0][1]
+            session['lname'] = result[0][2]
+            session['signed_in'] = True
             return render_template('home.html')
         else:
             return render_template('signin.html', invalid=True)
