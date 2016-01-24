@@ -8,8 +8,8 @@ import json
 signup = Blueprint('signup', __name__, template_folder='views')
 
 @signup.route('/signup', methods=['GET'])
-def showSignUp(exists=None):
-    return render_template('signup.html', exists=exists)
+def showSignUp():
+    return render_template('signup.html', exists=None)
 
 @signup.route('/signup', methods=['POST'])
 def signUp():
