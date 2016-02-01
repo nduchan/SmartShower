@@ -30,8 +30,10 @@ def signIn():
         pw = result[0][0]
         
         if (pw == _password):
-            sql = "SELECT (id, fname, lname) FROM SmartShowerDB.users WHERE email=%s"
-            cursor.execute(sql, _email)
+            print _email
+            sql = "SELECT id, fname, lname FROM SmartShowerDB.users WHERE email='%s'" % _email
+            print sql
+            cursor.execute(sql)
             result = cursor.fetchall()
             session['last_id'] = result[0][0]
             session['fname'] = result[0][1]
