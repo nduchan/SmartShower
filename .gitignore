@@ -1,4 +1,8 @@
 smartshower-venv
+shower-venv
 *.pyc
 */*.pyc
-*/*/*.pyc`
+*/*/*.pyc
+.gitignore
+client_secret.json
+*/*/client_secret.json
