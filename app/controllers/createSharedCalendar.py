@@ -15,7 +15,7 @@ createSharedCalendar = Blueprint('createSharedCalendar', __name__, template_fold
 
 @createSharedCalendar.route('/createSharedCalendar')
 def create():
-    session['oauth_caller'] = 'createSharedCalendar'
+    session['oauth_caller'] = 'create'
 
     if 'credentials' not in session:
         return redirect('/oauth2callback')
@@ -61,4 +61,3 @@ def create():
                 WHERE id = '{1}';'''.format(calendar_id, uid))
     conn.commit()
     return render_template("addEarliest.html", last_id=uid)  
-    
