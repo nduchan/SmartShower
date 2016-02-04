@@ -39,7 +39,8 @@ def signIn():
             session['fname'] = result[0][1]
             session['lname'] = result[0][2]
             session['signed_in'] = True
-            return render_template('home.html')
+            return redirect('/home')
+            #return render_template('home.html')
         else:
             return render_template('signin.html', invalid=True)
     else:
