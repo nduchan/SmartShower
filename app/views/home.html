@@ -25,8 +25,25 @@
 				<ul class="nav nav-pills pull-right">
 					<li role="presentation" class="active"><a href="home">Home</a>
 					</li>
+<<<<<<< HEAD
 					<li role="presentation"><a href="/signin">Sign In</a>
 					</li>
+=======
+					{% if session %}
+						{% if session.signed_in %}
+						<li role="presentation"><a href="/signin">Sign Out</a>
+						</li>
+						{% else %}
+						<!-- CHANGE THIS ROUTE -->
+						<li role="presentation"><a href="/signin">Sign In</a>
+						</li>
+						{% endif %}
+					{% else %}
+						<li role="presentation"><a href="/signin">Sign In</a>
+						</li>
+					{% endif %}
+
+>>>>>>> origin/master
 					<li role="presentation"><a href="/signup">Sign Up</a>
 					</li>
 			</nav>
@@ -44,7 +61,11 @@
 			&amp;height=600
 			&amp;wkst=1
 			&amp;bgcolor=%23EEEEEE
+<<<<<<< HEAD
 			&amp;src=063jcjj46il3jln3f6ggom2p2o%40group.calendar.google.com
+=======
+			&amp;src={{session.calendar_id}}
+>>>>>>> origin/master
 			&amp;color=%235229A3
 			&amp;ctz=America%2FNew_York" style=" border-width:0 " width="100%" height="600" frameborder="0" scrolling="no"></iframe>
 			<!--
