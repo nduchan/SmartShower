@@ -1,9 +1,4 @@
-smartshower-venv
-<<<<<<< HEAD
-*.pyc
-*/*.pyc
-*/*/*.pyc`
-=======
+
 shower-venv
 *.pyc
 */*.pyc
@@ -11,4 +6,3 @@ shower-venv
 .gitignore
 client_secret.json
 */*/client_secret.json
->>>>>>> origin/master
