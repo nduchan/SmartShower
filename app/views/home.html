@@ -26,10 +26,9 @@
 					</li>
 					{% if session %}
 						{% if session.signed_in %}
-						<li role="presentation"><a href="/signin">Sign Out</a>
+						<li role="presentation"><a href="/signout">Sign Out</a>
 						</li>
 						{% else %}
-						<!-- CHANGE THIS ROUTE -->
 						<li role="presentation"><a href="/signin">Sign In</a>
 						</li>
 						{% endif %}
