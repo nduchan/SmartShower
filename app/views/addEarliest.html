@@ -13,9 +13,20 @@
 				<ul class="nav nav-pills pull-right">
 					<li role="presentation"><a href="home">Home</a>
 					</li>
-					<li role="presentation"><a href="signin">Sign In</a>
-					</li>
-					<li role="presentation" class="active"><a href="signup">Sign Up</a>
+					{% if session %}
+						{% if session.signed_in %}
+						<li role="presentation"><a href="/signout">Sign Out</a>
+						</li>
+						{% else %}
+						<li role="presentation"><a href="/signin">Sign In</a>
+						</li>
+						{% endif %}
+					{% else %}
+						<li role="presentation"><a href="/signin">Sign In</a>
+						</li>
+					{% endif %}
+					
+					<li role="presentation"><a href="/signup">Sign Up</a>
 					</li>
 			</nav>
 			<h3 class="text-muted">Smart Shower!</h3>
