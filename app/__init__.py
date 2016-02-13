@@ -29,4 +29,5 @@ app.register_blueprint(controllers.signup)
 app.register_blueprint(controllers.update_profile)
 app.register_blueprint(controllers.createSharedCalendar)
 app.register_blueprint(controllers.oauth2callback)
+app.register_blueprint(controllers.signout)
 

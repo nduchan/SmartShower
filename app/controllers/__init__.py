@@ -6,3 +6,4 @@ from signup import *
 from update_profile import *
 from createSharedCalendar import *
 from oauth2callback import *
+from signout import *
