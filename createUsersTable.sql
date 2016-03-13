@@ -21,18 +21,17 @@ CREATE TABLE times
 	id INT,
 	showertime TIMESTAMP,
 
-	CONSTRAINT pk_id PRIMARY KEY id,
+	CONSTRAINT pk_id PRIMARY KEY (id),
 	FOREIGN KEY (id) REFERENCES users(id)
 
 );
 
 CREATE TABLE address
 (
-	address VARCHAR(12),
+	house_address VARCHAR(12) NOT NULL,
 	calendar_id VARCHAR(128),
 
-	CONSTRAINT pk_address PRIMARY KEY address,
-	FOREIGN KEY (address) REFERENCES users(address)
+	CONSTRAINT pk_address PRIMARY KEY (house_address)
 
 );
 
