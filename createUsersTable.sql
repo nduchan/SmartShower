@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-	id INT AUTO_INCREMENT PRIMARY KEY,
+	id INT AUTO_INCREMENT NOT NULL,
 	fname VARCHAR(20),
 	lname VARCHAR(20),
 	email VARCHAR(42),
@@ -11,18 +11,28 @@ CREATE TABLE users
 	buffer INT,
 	morning BOOLEAN,
 	event TIMESTAMP NULL,
-	calendar_id VARCHAR(128)
+	calendar_id VARCHAR(128),
+
+	CONSTRAINT pk_id PRIMARY KEY (id)
 );
 
 CREATE TABLE times
 (
+	id INT,
+	showertime TIMESTAMP,
 
+	CONSTRAINT pk_id PRIMARY KEY id
+	FOREIGN KEY (id) REFERENCES users(id)
 
 );
 
 CREATE TABLE address
 (
+	address VARCHAR(12),
+	calendar_id VARCHAR(128),
 
+	CONSTRAINT pk_address PRIMARY KEY address,
+	FOREIGN KEY (address) REFERENCES users(address)
 
 );
 
