@@ -56,8 +56,16 @@ def create():
 
     conn = mysql.connection
     cursor = conn.cursor()
-    cursor.execute('''UPDATE SmartShowerDB.users
-                SET calendar_id = '{0}'
-                WHERE id = '{1}';'''.format(calendar_id, uid))
+    ##cursor.execute('''UPDATE SmartShowerDB.users
+    ##            SET calendar_id = '{0}'
+    ##            WHERE id = '{1}';'''.format(calendar_id, uid))
+
+    sql = "SELECT address FROM SmartShowerDB.users WHERE id = %s"
+    cursor.execute(sql, (uid))
+    _address = cursor.fetchall()[0][0] 
+
+    sql = "UPDATE SmartShowerDB.address SET calendar_id = %s WHERE address = %s"
+    cursor.execute(sql, (_address))
+
     conn.commit()
     return render_template("addEarliest.html", last_id=uid)  
