@@ -28,7 +28,7 @@ def complete():
     #        return redirect('/signin')
     #     return render_template('completeProfile.html', last_id=last_id)
 
-
+    _address = session['address']
     _phone = request.form['phone']
     _ampm = request.form['ampm']
     _duration = request.form['duration']
@@ -57,14 +57,14 @@ def complete():
 
         cursor.execute(sql, (_phone, morning, _duration, _buffer, _last_id))
         conn.commit()
-        
-        cursor.execute("SELECT calendar_id FROM SmartShowerDB.address WHERE address = %s AND calendar_id IS NOT NULL", (_address))
+        print "address = " + address
+        cursor.execute("SELECT calendar_id FROM SmartShowerDB.address WHERE address = %s AND calendar_id IS NOT NULL" , (_address))
         result = cursor.fetchall()
         
         if result:
             _calendar_id = result[0][0]
             session['calendar_id'] = _calendar_id
-            
+
             return redirect('/addSharedCalendar')
         else:
             #will need this line
