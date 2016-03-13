@@ -14,3 +14,15 @@ CREATE TABLE users
 	calendar_id VARCHAR(128)
 );
 
+CREATE TABLE times
+(
+
+
+);
+
+CREATE TABLE address
+(
+
+
+);
+
