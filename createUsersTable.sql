@@ -28,10 +28,10 @@ CREATE TABLE times
 
 CREATE TABLE address
 (
-	house_address VARCHAR(12) NOT NULL,
+	address VARCHAR(12) NOT NULL,
 	calendar_id VARCHAR(128),
 
-	CONSTRAINT pk_address PRIMARY KEY (house_address)
+	CONSTRAINT pk_address PRIMARY KEY (address)
 
 );
 
