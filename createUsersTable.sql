@@ -21,7 +21,7 @@ CREATE TABLE times
 	id INT,
 	showertime TIMESTAMP,
 
-	CONSTRAINT pk_id PRIMARY KEY id
+	CONSTRAINT pk_id PRIMARY KEY id,
 	FOREIGN KEY (id) REFERENCES users(id)
 
 );
