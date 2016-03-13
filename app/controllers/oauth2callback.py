@@ -10,7 +10,7 @@ import httplib2
 from apiclient import discovery
 import datetime
 
-CLIENT_ID = "456555048105-49j7n97kvjuluk4f0b3598m70sk0e293"
+CLIENT_ID = "296854062921-6ifhricfncusc4luqu7eioav8dovm2p3"
 SCOPE = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'SmartShower'

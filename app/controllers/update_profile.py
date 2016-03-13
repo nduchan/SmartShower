@@ -57,8 +57,8 @@ def complete():
 
         cursor.execute(sql, (_phone, morning, _duration, _buffer, _last_id))
         conn.commit()
-        print "address = " + address
-        cursor.execute("SELECT calendar_id FROM SmartShowerDB.address WHERE address = %s AND calendar_id IS NOT NULL" , (_address))
+        print "address = " + _address
+        cursor.execute("SELECT calendar_id FROM SmartShowerDB.address WHERE address = '%s' AND calendar_id IS NOT NULL" % (_address))
         result = cursor.fetchall()
         
         if result:

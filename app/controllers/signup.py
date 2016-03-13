@@ -44,9 +44,10 @@ def signUp():
             session['lname'] = _lname
             session['signed_in'] = True
             session['address'] = _address
-
-            sql = "INSERT INTO SmartShowerDB.address (address) VALUES (%s)"
-            cursor.execute(sql, (_address))
+            print "address = " + _address
+            sql = "INSERT INTO SmartShowerDB.address (address) VALUES ('%s')" % _address
+            print "sql = "+ sql
+            cursor.execute(sql)
             conn.commit()
 
             #return render_template('completeProfile.html', last_id=last_id)
