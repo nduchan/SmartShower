@@ -30,7 +30,6 @@ def complete():
 
 
     _phone = request.form['phone']
-    _address = request.form['address']
     _ampm = request.form['ampm']
     _duration = request.form['duration']
     _buffer = request.form['buffer']
@@ -46,7 +45,7 @@ def complete():
         print "User not signed in, try logging in first!"
         return redirect('/signin')
 
-    if _phone and _address and _ampm and _duration and _buffer:
+    if _phone and _ampm and _duration and _buffer:
         conn = mysql.connection
         cursor = conn.cursor()
         morning = 0
@@ -54,20 +53,18 @@ def complete():
             morning = 1
         
 
-        sql = "UPDATE SmartShowerDB.users SET phone=%s, address=%s, morning=%s, duration=%s, buffer=%s WHERE id=%s"
+        sql = "UPDATE SmartShowerDB.users SET phone=%s, morning=%s, duration=%s, buffer=%s WHERE id=%s"
 
-        cursor.execute(sql, (_phone, _address, morning, _duration, _buffer, _last_id))
+        cursor.execute(sql, (_phone, morning, _duration, _buffer, _last_id))
         conn.commit()
         
-        cursor.execute("SELECT calendar_id FROM SmartShowerDB.users WHERE address = %s AND calendar_id IS NOT NULL", (_address,))
+        cursor.execute("SELECT calendar_id FROM SmartShowerDB.address WHERE address = %s AND calendar_id IS NOT NULL", (_address))
         result = cursor.fetchall()
         
         if result:
             _calendar_id = result[0][0]
             session['calendar_id'] = _calendar_id
-
-            cursor.execute("UPDATE SmartShowerDB.users SET calendar_id = %s WHERE id = %s", (_calendar_id, _last_id))
-            conn.commit()
+            
             return redirect('/addSharedCalendar')
         else:
             #will need this line
