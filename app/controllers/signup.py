@@ -35,6 +35,7 @@ def signUp():
             sql = "INSERT INTO SmartShowerDB.users (fname, lname, email, password, address) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (_fname, _lname, _email, _password, _address))
             conn.commit()
+
             cursor.execute("SELECT LAST_INSERT_ID()")
             result = cursor.fetchall()
             last_id = result[0][0]
@@ -43,6 +44,11 @@ def signUp():
             session['lname'] = _lname
             session['signed_in'] = True
             session['address'] = _address
+
+            sql = "INSERT INTO SmartShowerDB.address (address) VALUES (%s)"
+            cursor.execute(sql, (_address))
+            conn.commit()
+
             #return render_template('completeProfile.html', last_id=last_id)
             return redirect('/update_profile')
 
