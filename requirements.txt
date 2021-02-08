@@ -11,7 +11,7 @@ Flask==0.10.1
 Flask-MySQLdb==0.2.0
 google-api-python-client==1.4.2
 gunicorn==19.1.1
-httplib2==0.9.1
+httplib2==0.19.0
 itsdangerous==0.24
 Jinja2==2.7.3
 macholib==1.5.1
