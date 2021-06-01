@@ -5,7 +5,7 @@ six==1.9.0
 tornado==4.0.2
 Twisted==13.2.0
 uritemplate==0.6
-urllib3==1.12
+urllib3==1.26.5
 virtualenv==12.0.5
 Werkzeug==0.9.6
 xattr==0.6.4
